@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+
+import argparse
+import logging
+import os
+import codecs
+from collections import defaultdict
+
+from tilse.data import timelines
+from tilse.evaluation import metrictests, rouge
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(levelname)s %(''message)s')
+
+parser = argparse.ArgumentParser(description="Run metric tests on a set of timelines")
+
+parser.add_argument('-t', dest="timeline_dir", type=str, help='Timeline directory',
+                               required=True)
+
+args = parser.parse_args()
+
+timeline_dir = args.timeline_dir
+
+temp_reference_timelines = defaultdict(list)
+
+reference_timelines = {}
+
+# read timelines
+for topic in sorted(os.listdir(timeline_dir)):
+    logging.info(topic)
+
+    for i, filename in enumerate(list(os.listdir(timeline_dir + "/" + topic + "/timelines/"))):
+        full_path = timeline_dir + "/" + topic + "/timelines/" + filename
+
+        temp_reference_timelines[topic].append(
+            timelines.Timeline.from_file(codecs.open(full_path, "r", "utf-8", "replace"))
+        )
+
+for topic in temp_reference_timelines:
+    reference_timelines[topic] = timelines.GroundTruth(temp_reference_timelines[topic])
+
+evaluator = rouge.TimelineRougeEvaluator(measures=["rouge_1", "rouge_2"])
+
+mtests = metrictests.MetricTests(evaluator)
+
+test_names, test_scores = mtests.test_metrics(reference_timelines)
+
+scores_mapping = {}
+
+for name, scores in zip(test_names, test_scores):
+    print("")
+    print(name)
+
+    scores_to_print = "\t".join(("\n" + str(scores)).splitlines(True))
+    print(scores_to_print)
