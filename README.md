@@ -112,6 +112,7 @@ The numbers returned by the tests are slightly different from the numbers in the
 
 ## References
 
-Sebastian Martschat and Katja Markert (2017). **Improving ROUGE for Timeline Summarization.** To appear in *Proceedings
+Sebastian Martschat and Katja Markert (2017). **Improving ROUGE for Timeline Summarization.** In *Proceedings
 of the 15th Conference of the European Chapter of the Association for Computational Linguistics, volume 2: Short Papers*
-, Valencia, Spain, 3-7 April 2017.
+, Valencia, Spain, 3-7 April 2017, pages 285-290.  
+[PDF](https://aclweb.org/anthology/E/E17/E17-2046.pdf)
