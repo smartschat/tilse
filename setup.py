@@ -10,7 +10,7 @@ setup(
               'tilse.models.chieu',
               'tilse.models.regression',
               'tilse.models.submodular',
-              'tilse.representations'
+              'tilse.representations',
               'tilse.util'
               'tilse.test',
               'tilse.test.data',
