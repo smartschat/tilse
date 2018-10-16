@@ -1,7 +1,9 @@
 from __future__ import division
 
 import collections
+import os
 
+import nltk
 import numpy
 from scipy import optimize
 
@@ -20,28 +22,40 @@ class TimelineRougeEvaluator:
 
     Sebastian Martschat and Katja Markert (2017).
     Improving ROUGE for Timeline Summarization.
-    To appear in Proceedings of the 15th Conference of the European Chapter of the Association for Computational
-    Linguistics, volume 2: Short Papers, Valencia, Spain, 3-7 April 2017.
+    In Proceedings of the 15th Conference of the European Chapter of the
+    Association for Computational Linguistics, volume 2: Short Papers,
+    Valencia, Spain, 3-7 April 2017.
 
     Attributes:
-        measures set(str): ROUGE measures to use when computing scores.
-            Defaults to `rouge_1`.
-        rouge (pyrouge.Rouge155): object to interfer with the ROUGE script.
-        alpha (float): Valua controlloing the recall/precision trade-off when
-            computing F_alpha scores. Defaults to 1.
+        measures (set(str)): ROUGE measures to use when computing scores.
+        rouge (pyrouge.Rouge155 or RougeReimplementation): Object to perform
+            ROUGE computation.
+        beta (float): Value controlling the recall/precision trade-off when
+            computing F_beta scores. Defaults to 1.
 
     """
-    def __init__(self, measures={"rouge_1"}, beta=1):
+
+    def __init__(self, measures={"rouge_1"}, rouge_computation="original",
+                 beta=1):
         """ Initialize the evaluator.
 
         Args:
-            measures set(str): ROUGE measures to use when computing scores.
+            measures (set(str)): ROUGE measures to use when computing scores.
                 Defaults to `rouge_1`.
-            beta (float): Valua controlloing the recall/precision trade-off when
+            rouge_computation (str): Whether to use the original ROUGE perl
+                script ("original") or an approximate Python reimplementation
+                ("reimpl"). Defaults to "original".
+            beta (float): Value controlling the recall/precision trade-off when
                 computing F_beta scores. Defaults to 1.
         """
         self.measures = measures
-        self.rouge = pyrouge.Rouge155(average="raw", stem=True, ignore_stopwords=True)
+
+        if rouge_computation == "reimpl":
+            self.rouge = RougeReimplementation()
+        elif rouge_computation == "original":
+            self.rouge = pyrouge.Rouge155(average="raw", stem=True,
+                                          ignore_stopwords=True)
+
         self.beta = beta
 
     def evaluate_concat(self, predicted_timeline, reference_timelines):
@@ -80,6 +94,7 @@ class TimelineRougeEvaluator:
         output_scores = {}
 
         for measure in self.measures:
+
             prec = scores[measure]["prec_num"] / scores[measure]["prec_denom"]
             rec = scores[measure]["rec_num"] / scores[measure]["rec_denom"]
 
@@ -130,13 +145,12 @@ class TimelineRougeEvaluator:
                 groundtruth
             )
 
-            if date in pred_dates:
-                for measure in self.measures:
+            for measure in self.measures:
+                if date in pred_dates:
                     precision_numerator[measure].append(scores[measure]["prec_num"])
                     precision_denominator[measure].append(scores[measure]["prec_denom"])
 
-            if date in ref_dates:
-                for measure in self.measures:
+                if date in ref_dates:
                     recall_numerator[measure].append(scores[measure]["rec_num"])
                     recall_denominator[measure].append(scores[measure]["rec_denom"])
 
@@ -282,7 +296,8 @@ class TimelineRougeEvaluator:
             ("agreement", self.evaluate_agreement(predicted_timeline, reference_timelines)),
             ("align_date_costs", self.evaluate_align_date_costs(predicted_timeline, reference_timelines)),
             ("align_date_content_costs", self.evaluate_align_date_content_costs(predicted_timeline, reference_timelines)),
-            ("align_date_content_costs_many_to_one", self.evaluate_align_date_content_costs_many_to_one(predicted_timeline, reference_timelines)),
+            ("align_date_content_costs_many_to_one",
+             self.evaluate_align_date_content_costs_many_to_one(predicted_timeline, reference_timelines)),
         ])
 
     def _evaluate_per_day_mapping_micro(
@@ -421,7 +436,7 @@ class TimelineRougeEvaluator:
             to_add = []
 
             for t_date in b:
-                to_add.append(1 - 1/(abs(s_date.toordinal() - t_date.toordinal())+1))
+                to_add.append(1 - 1 / (abs(s_date.toordinal() - t_date.toordinal()) + 1))
 
             costs.append(to_add)
 
@@ -444,7 +459,7 @@ class TimelineRougeEvaluator:
         for s_date in a:
             to_add = []
             for t_date in b:
-                date_factor = 1 - 1/(abs(s_date.toordinal() - t_date.toordinal())+1)
+                date_factor = 1 - 1 / (abs(s_date.toordinal() - t_date.toordinal()) + 1)
 
                 date_pred = s_date
                 date_ref = t_date
@@ -488,3 +503,155 @@ class TimelineRougeEvaluator:
             scores[measure]["rec_denom"] = temp_scores[measure + "_m_count"]
 
         return scores
+
+
+class RougeReimplementation:
+    """
+    An approximate reimplementation of ROUGE-1 and ROUGE-2.
+
+    It does not exactly match scores from the Perl script. It therefore
+    should not be used for computing scores on development and test
+    sets when preparing results for papers or for comparison to other
+    systems. However, due to improved speed it is useful during development
+    (scores also should not differ too much from the original
+    implementation).
+
+    Attributes:
+        stem (bool): Whether to stem words before evaluation.
+        ignore_stopwords (bool): Whether to ignore stopwords before
+            evaluation.
+        porter_stemmer (PorterStemmer): nltk's implementation of the
+            Porter stemmer.
+        stem_function (func): Utility function for performing stemming.
+        stopwords (set(str)): Stopwords, set to the list used in
+            ROUGE's Perl evaluation script.
+    """
+    def __init__(self, stem=True, ignore_stopwords=True):
+        """
+        Initializes ROUGE reimplementation.
+
+        Params:
+            stem (bool): Whether to stem words before evaluation. Defaults
+                to True.
+            ignore_stopwords (bool): Whether to ignore stopwords before
+                evaluation. Defaults to True.
+        """
+        self.stem = stem
+        self.ignore_stopwords = ignore_stopwords
+        self.stopwords = set()
+        self.porter_stemmer = nltk.stem.PorterStemmer()
+
+        self.stem_function = self._identity
+
+        if stem:
+            self.stem_function = self._robust_porter_stemmer
+
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        if ignore_stopwords:
+            with open(dir_path + "/../../pyrouge/tools/ROUGE-1.5.5/data/smart_common_words.txt") as my_file:
+                self.stopwords = set(my_file.read().splitlines())
+
+    def score_summary(self, summary, references):
+        """
+        Scores a summary with ROUGE-1 and ROUGE-2.
+
+        Params:
+            summary (list(list(str))): A list of tokenized sentences,
+                representing a predicted summary.
+
+            references dict(int, list(list(str))): A mapping of integers
+                to lists of tokenized sentences, representing reference
+                summaries.
+
+        Returns:
+              A mapping from strings to integers, with the
+              following meaning (same representation as pyrouge):
+                "rouge_1_h_count": ROUGE-1 recall/precision numerator,
+                "rouge_1_p_count": ROUGE-1 precision denominator,
+                "rouge_1_m_count": ROUGE-1 recall denominator.
+
+                Analogous for ROUGE-2.
+        """
+        punctuation = [".", ",", ";", ":", "``", "''", "-", '"']
+
+        to_ignore = self.stopwords.union(punctuation)
+
+        pred_tokens_lowercased = [self.stem_function(k.lower()) for sent in summary for k in sent
+                                  if k.lower() not in to_ignore]
+
+        ref_tokens_lowercased = {}
+
+        for i, ref_summary in references.items():
+            ref_tokens_lowercased[i] = [self.stem_function(k.lower()) for sent in ref_summary for k
+                                        in sent if k.lower() not in to_ignore]
+
+        eval_scores = {}
+        eval_scores.update(
+            self._rouge_1(pred_tokens_lowercased, ref_tokens_lowercased))
+        eval_scores.update(
+            self._rouge_2(pred_tokens_lowercased, ref_tokens_lowercased))
+
+        return eval_scores
+
+    def _identity(self, x):
+        return x
+
+    def _robust_porter_stemmer(self, x):
+        stem = x
+
+        try:
+            stem = self.porter_stemmer.stem(x)
+        except IndexError:
+            pass
+
+        return stem
+
+    def _rouge_1(self, pred_tokens, ref_tokens):
+        # unigrams
+        pred_counts = collections.Counter(pred_tokens)
+
+        ref_counts = {}
+
+        for i, tokens in ref_tokens.items():
+            ref_counts[i] = collections.Counter(tokens)
+
+        # approximate ROUGE-1 score
+        match = 0
+        for tok in pred_counts:
+            match += sum([min(pred_counts[tok], ref_counts[x][tok]) for x in
+                          ref_counts.keys()])
+
+        prec_denom = (len(ref_counts.keys()) * sum(pred_counts.values()))
+
+        recall_denom = sum([sum(ref_counts[x].values()) for x in ref_counts])
+
+        return {
+            "rouge_1_h_count": match,
+            "rouge_1_p_count": prec_denom,
+            "rouge_1_m_count": recall_denom,
+        }
+
+    def _rouge_2(self, pred_tokens, ref_tokens):
+        pred_counts = collections.Counter(zip(pred_tokens, pred_tokens[1:]))
+
+        ref_counts = {}
+
+        for i, tokens in ref_tokens.items():
+            ref_counts[i] = collections.Counter(zip(tokens, tokens[1:]))
+
+        # approximate ROUGE-1 score
+        match = 0
+        for tok in pred_counts:
+            match += sum([min(pred_counts[tok], ref_counts[x][tok]) for x in
+                          ref_counts.keys()])
+
+        prec_denom = (len(ref_counts.keys()) * sum(pred_counts.values()))
+
+        recall_denom = sum([sum(ref_counts[x].values()) for x in ref_counts])
+
+        return {
+            "rouge_2_h_count": match,
+            "rouge_2_p_count": prec_denom,
+            "rouge_2_m_count": recall_denom,
+        }

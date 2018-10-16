@@ -18,11 +18,13 @@ class TestUtil(unittest.TestCase):
         ground_truth2 = [[" A nice test .", "Another ."]]
         ground_truth3 = [[" A nice test ."], ["I like the test ."]]
 
-        self.assertEqual(2 * 0.5 * 0.75 / (0.5 + 0.75), util.compute_rouge_approximation(pred_sent, ground_truth1))
-        self.assertEqual(2 * (5 / 6) * (5 / 6) / ((5 / 6) + (5 / 6)),
+        self.assertEqual(2 * 0.5 * (2 / 3) / (0.5 + (2 / 3)),
+                         util.compute_rouge_approximation(pred_sent, ground_truth1))
+        self.assertEqual(2 * (3 / 4) * (3 / 4) / ((3 / 4) + (3 / 4)),
                          util.compute_rouge_approximation(pred_sent, ground_truth2))
-        self.assertEqual(2 * (5 / 12) * (5 / 9) / ((5 / 12) + (5 / 9)),
+        self.assertEqual(2 * (3 / 8) * (3 / 7) / ((3 / 8) + (3 / 7)),
                          util.compute_rouge_approximation(pred_sent, ground_truth3))
+
 
 if __name__ == '__main__':
     unittest.main()

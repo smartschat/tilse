@@ -1,12 +1,13 @@
 from __future__ import division
 
+import string
 from collections import Counter
 
 
 def get_f_score(prec, rec, beta=1):
     """ Compute F_beta score.
 
-    The formula is F_beta = (1+beta**2)*prec*rec/(beta*prec + rec)
+    The formula is F_beta = (1+beta**2)*prec*rec/((beta**2)*prec + rec)
 
     Args:
         prec (float): Precision
@@ -38,14 +39,14 @@ def compute_rouge_approximation(pred_summary, groundtruth):
     """
     pred_counts = Counter()
     for sent in pred_summary:
-        pred_counts.update(sent.split())
+        pred_counts.update([k for k in sent.split() if k not in string.punctuation])
 
     ref_counts = {}
 
     for i, summary in enumerate(groundtruth):
         ref_counts[i] = Counter()
         for sent in summary:
-            ref_counts[i].update(Counter(sent.split()))
+            ref_counts[i].update(Counter([k for k in sent.split() if k not in string.punctuation]))
 
     # approximate ROUGE-1 score
     match = 0

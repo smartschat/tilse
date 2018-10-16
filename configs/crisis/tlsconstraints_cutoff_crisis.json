@@ -1,0 +1,27 @@
+{
+  "name": "tlsconstraints_cutoff_crisis",
+  "algorithm": "submodular",
+  "corpus": "/home/mitarb/martschat/tls/tilse/crisis",
+  "restrict_topics_to": null,
+  "assess_length": "average_length_in_sentences",
+  "sentence_representation": "CutOffChieuSentenceRepresentation",
+  "keyword_mapping": {
+    "bpoil": ["bp", "oil", "spill"],
+    "egypt": ["egypt", "egyptian"],
+    "finan": ["financial", "economic", "crisis"],
+    "h1n1": ["h1n1", "swine", "flu"],
+    "haiti": ["haiti", "quake", "earthquake"],
+    "iraq": ["iraq", "iraqi"],
+    "libya": ["libya", "libyan"],
+    "mj": ["michael", "jackson"],
+    "syria": ["syria", "syrian"],
+    "yemen": ["yemen"]
+  },
+  "rouge_computation": "original",
+  "properties": {
+    "constraint": "is_valid_individual_constraints",
+    "semantic_cluster": "clusters_by_similarity",
+    "date_cluster": "clusters_by_date",
+    "coefficients": [1, 1, 0, 0]
+  }
+}

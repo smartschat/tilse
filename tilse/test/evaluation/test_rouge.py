@@ -179,9 +179,9 @@ class TestRouge(unittest.TestCase):
         self.assertEqual(
             {"rouge_1":
                 {
-                    "precision": 2.5 / 12,
+                    "precision": 2 / 12,
                     "recall": 2.5 / 11,
-                    "f_score": 2 * (2.5 / 12) * (2.5 / 11) / (2.5 / 12 + 2.5 / 11)
+                    "f_score": 2 * (2 / 12) * (2.5 / 11) / (2 / 12 + 2.5 / 11)
                  }
             },
             self.evaluator.evaluate_align_date_content_costs(self.output_same_number_of_dates, self.ground_truth)

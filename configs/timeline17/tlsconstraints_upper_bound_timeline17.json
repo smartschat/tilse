@@ -1,0 +1,24 @@
+{
+  "name": "tlsconstraints_upper_bound_timeline17",
+  "algorithm": "upper_bound",
+  "corpus": "/home/mitarb/martschat/tls/tilse/timeline17",
+  "restrict_topics_to": null,
+  "assess_length": "average_length_in_sentences",
+  "sentence_representation": "ChieuSentenceRepresentation",
+  "keyword_mapping": {
+    "bpoil": ["bp", "oil", "spill"],
+    "egypt": ["egypt", "egyptian"],
+    "finan": ["financial", "economic", "crisis"],
+    "h1n1": ["h1n1", "swine", "flu"],
+    "haiti": ["haiti", "quake", "earthquake"],
+    "iraq": ["iraq", "iraqi"],
+    "libya": ["libya", "libyan"],
+    "mj": ["michael", "jackson"],
+    "syria": ["syria", "syrian"],
+    "yemen": ["yemen"]
+  },
+  "rouge_computation": "original",
+  "properties": {
+    "constraint": "is_valid_individual_constraints"
+  }
+}

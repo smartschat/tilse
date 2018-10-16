@@ -1,5 +1,5 @@
-import random
 import datetime
+import random
 
 from tilse.data import timelines
 from tilse.evaluation import scores
@@ -21,6 +21,7 @@ class MetricTests:
         rouge (evaluation.TimelineRougeEvaluator): an object implementing the metrics to check.
 
     """
+
     def __init__(self, rouge):
         """ Initialize metric tests.
 

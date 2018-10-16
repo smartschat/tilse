@@ -9,10 +9,11 @@ class Timeline:
             summary is represented as a list of sentences. Each sentence is represented as a string where tokens
             are seperated by space.
     """
+
     def __init__(self, dates_to_summaries, filename=None):
         ''' Initialize a timelines.
 
-        Args:
+        Params:
             dates_to_summaries (dict(datetime.date, list(str))): A mapping of dates to summaries for the dates. Each
             summary is represented as a list of sentences. Each sentence is represented as a string where tokens
             are seperated by space.
@@ -31,7 +32,6 @@ class Timeline:
 
         return string_repr
 
-
     def __eq__(self, other):
         return self.dates_to_summaries == other.dates_to_summaries
 
@@ -45,9 +45,13 @@ class Timeline:
         return self.dates_to_summaries.get(item, "")
 
     def __len__(self):
+        """ Returns the length of the timeline in days.
+        """
         return len(self.dates_to_summaries)
 
     def get_dates(self):
+        """ Returns all dates in the timeline as a set.
+        """
         return set(self.dates_to_summaries.keys())
 
     @staticmethod
@@ -64,7 +68,7 @@ class Timeline:
         BP pumps cement to seal the damaged well after it was intercepted by a relief well .
         --------------------------------
 
-        Args:
+        Params:
             my_file (file): The file which contains the timeline.
 
         Returns:
@@ -90,19 +94,41 @@ class Timeline:
 
         return Timeline(dates_to_summaries, my_file.name)
 
+    @staticmethod
+    def from_sent_objects(date_sent_mapping):
+        dates_to_summaries = {}
+
+        for date, sents_list in date_sent_mapping.items():
+            if date not in dates_to_summaries:
+                dates_to_summaries[date] = []
+
+            for sent in sents_list:
+                dates_to_summaries[date].append(str(sent))
+
+        return Timeline(dates_to_summaries)
+
+    def get_number_of_sentences(self):
+        """ Returns the total number of sentences in the timeline.
+
+        Returns:
+            The number of sentences in the timeline.
+        """
+        return sum([len(sents) for sents in self.dates_to_summaries.values()])
+
 
 class GroundTruth:
     """ Represent a collection of (reference) timelines.
 
-    Thic class is designed to be used for evaluation.
+    This class is designed to be used for evaluation.
 
     Attributes:
         timelines (collection(Timeline)): A collection of timelines.
     """
+
     def __init__(self, timelines):
         """ Initialize from a collection of reference timelines..
 
-        Attributes:
+        Params:
             timelines (list(Timeline)): A collection of timelines.
         """
         self.timelines = timelines
@@ -114,14 +140,6 @@ class GroundTruth:
             A set of datetime.date objects. This set contains all dates that are
             in any of the contained timelines.
         """
-        all_keys = set()
-
-        for tl in self.timelines:
-            all_keys.update(tl.dates_to_summaries.keys())
-
-        return all_keys
-
-    def __iter__(self):
         all_keys = set()
 
         for tl in self.timelines:
