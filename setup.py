@@ -11,7 +11,7 @@ setup(
               'tilse.models.regression',
               'tilse.models.submodular',
               'tilse.representations',
-              'tilse.util'
+              'tilse.util',
               'tilse.test',
               'tilse.test.data',
               'tilse.test.evaluation',
