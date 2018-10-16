@@ -13,7 +13,7 @@ pip install tilse
 ```
 Dependencies (automatically installed by pip) are [NumPy](http://www.numpy.org/),
 [SciPy](https://www.scipy.org/), [pathlib2](https://pypi.python.org/pypi/pathlib2/) (for Python < 3.4),
-[Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/), sklearn, numba, textacy and nltk.
+[Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/), sklearn, numba, spacy, textacy and nltk.
 __tilse__ ships with an adapted version of [pyrouge](https://github.com/andersjo/pyrouge) and contains
 [HeidelTime](https://github.com/HeidelTime/heideltime).
 
@@ -23,7 +23,7 @@ You also need to install a model for spaCy, e.g. via
 python -m spacy download en
 ```
 
-__tilse__ is written for use on Linux with Python 3.4+ but it also runs under Python 2.7.
+__tilse__ is written for use on Linux with Python 3.4+.
 
 ## Documentation
 
