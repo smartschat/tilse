@@ -17,6 +17,12 @@ Dependencies (automatically installed by pip) are [NumPy](http://www.numpy.org/)
 __tilse__ ships with an adapted version of [pyrouge](https://github.com/andersjo/pyrouge) and contains
 [HeidelTime](https://github.com/HeidelTime/heideltime).
 
+You also need to install a model for spaCy, e.g. via
+
+```
+python -m spacy download en
+```
+
 __tilse__ is written for use on Linux with Python 3.4+ but it also runs under Python 2.7.
 
 ## Documentation
