@@ -32,7 +32,7 @@ setup(
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Topic :: Text Processing',
     ],
-    install_requires=['numpy', 'scipy', 'pathlib2', 'beautifulsoup4', 'scikit-learn', 'numba', 'textacy', 'nltk'],
+    install_requires=['numpy', 'scipy', 'pathlib2', 'beautifulsoup4', 'scikit-learn', 'numba', 'spacy', 'textacy', 'nltk'],
     package_data={
         'pyrouge': ['tools/ROUGE-1.5.5/XML/DOM/*',
                     'tools/ROUGE-1.5.5/XML/Handler/*',
