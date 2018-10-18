@@ -38,9 +38,9 @@ if corpus not in ["crisis", "timeline17"]:
 to_retrieve = ""
 
 if corpus == "timeline17":
-    to_retrieve = "http://www.ffsecrets.de/stuff/Timeline17.zip"
+    to_retrieve = "http://l3s.de/~gtran/timeline/Timeline17.zip"
 elif corpus == "crisis":
-    to_retrieve = "http://www.ffsecrets.de/stuff/crisis.data.tar.gz"
+    to_retrieve = "http://l3s.de/~gtran/timeline/crisis.data.tar.gz"
 
 filename, _ = urlrequest.urlretrieve(to_retrieve)
 
