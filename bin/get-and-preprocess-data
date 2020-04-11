@@ -138,7 +138,7 @@ shutil.rmtree(temp_path)
 
 # sentence split and tokenize (if neccessary)
 
-nlp = spacy.load("en")
+nlp = spacy.load("en_core_web_sm")
 
 if corpus == "crisis":
     counter = 0
@@ -260,7 +260,7 @@ if corpus == "timeline17":
 
 # linguistic processing and serialization
 
-nlp = spacy.load("en")
+nlp = spacy.load("en_core_web_sm")
 
 path_dumped = path + "dumped_corpora/"
 

@@ -36,7 +36,7 @@ temp_reference_timelines = defaultdict(list)
 news_corpora = {}
 reference_timelines = {}
 
-nlp = spacy.load("en")
+nlp = spacy.load("en_core_web_sm")
 
 # read corpora and timelines
 corpus = config["corpus"]
