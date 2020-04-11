@@ -159,7 +159,7 @@ class Document:
         for token in doc:
             token_objects.append(
                 Token(token.orth_,
-                      token.lemma_,
+                      token.lemma_.lower(),
                       token.tag_,
                       token.ent_type_,
                       token.vector,
