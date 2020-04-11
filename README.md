@@ -32,10 +32,11 @@ __tilse__ is written for use on Linux with Python 3.4+.
 
 ## References
 
+Sebastian Martschat and Katja Markert (2018). **A Temporally Sensitive Submodularity Framework for Timeline Summarization.**
+In *Proceedings of the 22nd Conference on Computational Natural Language Learning (CoNLL)*, Brussels, Belgium, 31 October-1 November 2018, pages 230-240.
+[PDF](https://arxiv.org/pdf/1810.07949.pdf)
+
 Sebastian Martschat and Katja Markert (2017). **Improving ROUGE for Timeline Summarization.** In *Proceedings
 of the 15th Conference of the European Chapter of the Association for Computational Linguistics, volume 2: Short Papers*,
 Valencia, Spain, 3-7 April 2017, pages 285-290.
 [PDF](https://aclweb.org/anthology/E/E17/E17-2046.pdf)
-
-Sebastian Martschat and Katja Markert (2018). **A Temporally Sensitive Submodularity Framework for Timeline Summarization.**
-To appear in *Proceedings of the 22nd Conference on Computational Natural Language Learning (CoNLL)*, Brussels, Belgium, 31 October-1 November 2018.
