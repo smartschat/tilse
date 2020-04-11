@@ -59,11 +59,10 @@ class Random(models.Model):
             timeline_properties.daily_summary_length,
             timeline_properties.num_dates,
             timeline_properties.start,
-            timeline_properties.end,
-            dates_to_consider=None
+            timeline_properties.end
         )
 
-        return timelines.Timeline.from_sent_objects(post_processed)
+        return post_processed
 
 
     def preprocess(self, topic_name, corpus):
@@ -78,4 +77,4 @@ class Random(models.Model):
             None
         """
 
-        raise NotImplementedError("Needs to be implemented by subclass.")
+        return None

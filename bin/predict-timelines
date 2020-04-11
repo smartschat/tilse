@@ -17,6 +17,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from tilse.models.regression import regression
 from tilse.models.submodular import submodular, upper_bounds
 from tilse.models.chieu import chieu
+from tilse.models.random import random
 from tilse.data import timelines
 from tilse.evaluation import rouge
 
