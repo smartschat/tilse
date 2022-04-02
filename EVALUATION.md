@@ -71,7 +71,7 @@ In order to run metric tests as described in our paper, you can use the command 
 The script processes sets of reference timelines of one or more topics. The tests can be invoked as follows:
 
 ```
-run-timeline-metric-tests -t /path/to/timelines
+run-timeline-metrics-tests -t /path/to/timelines
 ```
 
 where the timelines in `/path/to/timelines` are organized as in the following example:
